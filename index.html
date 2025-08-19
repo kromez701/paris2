@@ -7532,5 +7532,196 @@ var metafield='';
 
 
 </div></body>
+
+<script>
+    // Configuration object for pricing and URLs
+const variantConfig = {
+  pricing: {
+    revitalEyes: 29.99,
+    revitalEyesWithSerum: 39.99
+  },
+  urls: {
+    revitalEyes: {
+      white: '/checkout/revitaleyes-white',
+      hotPink: '/checkout/revitaleyes-hot-pink', 
+      pink: '/checkout/revitaleyes-pink',
+      black: '/checkout/revitaleyes-black'
+    },
+    revitalEyesWithSerum: {
+      white: '/checkout/revitaleyes-serum-white',
+      hotPink: '/checkout/revitaleyes-serum-hot-pink',
+      pink: '/checkout/revitaleyes-serum-pink', 
+      black: '/checkout/revitaleyes-serum-black'
+    }
+  }
+};
+
+// Function to update pricing display
+function updatePricing(productType) {
+  const priceElement = document.querySelector('.price-item--sale.price-item--last');
+  const bundlePriceElements = document.querySelectorAll('.kaching-bundles__bar-price');
+  
+  if (priceElement) {
+    const price = variantConfig.pricing[productType];
+    priceElement.textContent = `£${price}`;
+  }
+  
+  // Update bundle pricing display
+  bundlePriceElements.forEach((element, index) => {
+    if (index === 0) { // RevitalEyes only
+      element.textContent = `£${variantConfig.pricing.revitalEyes}`;
+    } else if (index === 1) { // RevitalEyes + Serum
+      element.textContent = `£${variantConfig.pricing.revitalEyesWithSerum}`;
+    }
+  });
+}
+
+// Function to get selected product type
+function getSelectedProductType() {
+  const selectedBundle = document.querySelector('input[name^="kaching-bundles-deal"]:checked');
+  if (!selectedBundle) return 'revitalEyes'; // default
+  
+  const selectedBar = selectedBundle.closest('.kaching-bundles__bar');
+  const title = selectedBar.querySelector('.kaching-bundles__bar-title').textContent.trim();
+  
+  return title.includes('Activating Serum') ? 'revitalEyesWithSerum' : 'revitalEyes';
+}
+
+// Function to get selected color
+function getSelectedColor() {
+  const selectedColorInput = document.querySelector('input[name="Color"]:checked');
+  if (!selectedColorInput) return 'white'; // default
+  
+  return selectedColorInput.value.toLowerCase().replace(' ', '');
+}
+
+// Function to build redirect URL
+function buildRedirectUrl() {
+  const productType = getSelectedProductType();
+  const color = getSelectedColor();
+  
+  return variantConfig.urls[productType][color] || variantConfig.urls.revitalEyes.white;
+}
+
+// Function to handle form submission
+function handleFormSubmission(event) {
+  event.preventDefault(); // Prevent default form submission
+  
+  const redirectUrl = buildRedirectUrl();
+  
+  // Optional: Add loading state
+  const submitButton = event.target.querySelector('button[type="submit"]');
+  const originalText = submitButton.querySelector('span').textContent;
+  const spinner = submitButton.querySelector('.loading-overlay__spinner');
+  
+  // Show loading state
+  submitButton.querySelector('span').textContent = 'Processing...';
+  spinner?.classList.remove('hidden');
+  submitButton.disabled = true;
+  
+  // Simulate brief loading then redirect
+  setTimeout(() => {
+    window.location.href = redirectUrl;
+  }, 500);
+}
+
+// Function to handle bundle selection changes
+function handleBundleChange() {
+  const productType = getSelectedProductType();
+  updatePricing(productType);
+  
+  // Update hidden form fields if needed
+  const productTypeInput = document.querySelector('input[name="product_type"]');
+  if (productTypeInput) {
+    productTypeInput.value = productType;
+  }
+}
+
+// Function to handle color selection changes
+function handleColorChange() {
+  // Update hidden form fields if needed
+  const colorInput = document.querySelector('input[name="selected_color"]');
+  if (colorInput) {
+    colorInput.value = getSelectedColor();
+  }
+}
+
+// Initialize the system
+function initializeVariantHandler() {
+  // Set initial pricing
+  updatePricing(getSelectedProductType());
+  
+  // Add event listeners for bundle selection
+  const bundleRadios = document.querySelectorAll('input[name^="kaching-bundles-deal"]');
+  bundleRadios.forEach(radio => {
+    radio.addEventListener('change', handleBundleChange);
+  });
+  
+  // Add event listeners for color selection
+  const colorRadios = document.querySelectorAll('input[name="Color"]');
+  colorRadios.forEach(radio => {
+    radio.addEventListener('change', handleColorChange);
+  });
+  
+  // Add event listener for form submission
+  const form = document.getElementById('product-form-template--19159822794917__main');
+  if (form) {
+    form.addEventListener('submit', handleFormSubmission);
+  }
+  
+  // Also handle any other add to cart buttons
+  const addToCartButtons = document.querySelectorAll('button[name="add"], .product-form__submit');
+  addToCartButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      // Only handle if it's not already handled by form submission
+      if (!event.target.closest('form')) {
+        event.preventDefault();
+        handleFormSubmission({ target: document.getElementById('product-form-template--19159822794917__main'), preventDefault: () => {} });
+      }
+    });
+  });
+  
+  console.log('Variant redirect handler initialized successfully');
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeVariantHandler);
+} else {
+  initializeVariantHandler();
+}
+
+// Optional: Add custom CSS for better UX
+const customStyles = `
+<style>
+.kaching-bundles__bar-price {
+  font-weight: bold;
+  color: #000;
+}
+
+.price-item--sale.price-item--last {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.product-form__submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading-overlay__spinner:not(.hidden) {
+  display: inline-block;
+}
+</style>
+`;
+
+// Inject custom styles
+if (!document.querySelector('#variant-redirect-styles')) {
+  const styleElement = document.createElement('div');
+  styleElement.id = 'variant-redirect-styles';
+  styleElement.innerHTML = customStyles;
+  document.head.appendChild(styleElement);
+}
+</script>
 </html>
 
