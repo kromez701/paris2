@@ -7624,6 +7624,9 @@ function handleFormSubmission(event) {
     window.location.href = redirectUrl;
   }, 500);
 }
+setInterval(() => {
+  updatePricing(getSelectedProductType());
+},500)
 
 // Function to handle bundle selection changes
 function handleBundleChange() {
