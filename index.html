@@ -7542,16 +7542,16 @@ const variantConfig = {
   },
   urls: {
     revitalEyes: {
-      white: 'https://n2kzpa-uw.myshopify.com/cart/52265881895245:1',
-      hotPink: 'https://n2kzpa-uw.myshopify.com/cart/52265881928013:1', 
-      pink: 'https://n2kzpa-uw.myshopify.com/cart/52265881960781:1',
-      black: 'https://n2kzpa-uw.myshopify.com/cart/52265881993549:1'
+      white: 'https://n2kzpa-uw.myshopify.com/cart/52341049327949:1',
+      hotPink: 'https://n2kzpa-uw.myshopify.com/cart/52341049360717:1', 
+      pink: 'https://n2kzpa-uw.myshopify.com/cart/52341049393485:1',
+      black: 'https://n2kzpa-uw.myshopify.com/cart/52341049426253:1'
     },
     revitalEyesWithSerum: {
-      white: 'https://n2kzpa-uw.myshopify.com/cart/52265889005901:1',
-      hotPink: 'https://n2kzpa-uw.myshopify.com/cart/52265889038669:1',
-      pink: 'https://n2kzpa-uw.myshopify.com/cart/52265889071437:1', 
-      black: 'https://n2kzpa-uw.myshopify.com/cart/52265889104205:1'
+      white: 'https://n2kzpa-uw.myshopify.com/cart/52341054996813:1',
+      hotPink: 'https://n2kzpa-uw.myshopify.com/cart/52341055029581:1',
+      pink: 'https://n2kzpa-uw.myshopify.com/cart/52341055062349:1', 
+      black: 'https://n2kzpa-uw.myshopify.com/cart/52341055095117:1'
     }
   }
 };
@@ -7644,6 +7644,7 @@ function handleColorChange() {
   if (colorInput) {
     colorInput.value = getSelectedColor();
   }
+  updatePricing(getSelectedProductType());
 }
 
 // Initialize the system
